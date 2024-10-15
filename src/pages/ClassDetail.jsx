@@ -13,9 +13,9 @@ const ClassDetail = () => {
   const allKelasData = useCourseStore((state) => state.classes);
   const kelasData = allKelasData.find((dt) => dt.id == id);
   const relatedKelasData = allKelasData.filter(
-    (dt) => dt.category == kelasData.category
+    (dt) => dt.category == kelasData.category && dt.id != id
   );
-  const materiKelas = useCourseStore((state) => state.classDetail);
+  const materiKelas = kelasData.materials;
   const classPackage = useCourseStore((state) => state.classPackage);
 
   return (

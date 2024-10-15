@@ -1,14 +1,13 @@
 import { create } from "zustand";
-
-import DataKelas from "../data/kelas.json";
-import DataKelasDetail from "../data/kelasMaterials.json";
+import axios from "../axios";
 
 const courseStore = (set, get) => ({
   paidCourse: localStorage.getItem("course")
     ? JSON.parse(localStorage.getItem("course"))
     : [],
-  classes: DataKelas,
-  classDetail: DataKelasDetail,
+  classes: localStorage.getItem("kelas")
+    ? JSON.parse(localStorage.getItem("kelas"))
+    : [],
   classPackage: [
     {
       id: 1,
@@ -55,6 +54,18 @@ const courseStore = (set, get) => ({
       ),
     },
   ],
+
+  getAllCourse: async () => {
+    try {
+      const apiResponse = await axios.get("/kelas");
+      localStorage.setItem("kelas", JSON.stringify(apiResponse.data.data));
+      set(() => ({
+        classes: apiResponse.data.data,
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  },
   filteredClass: (category) => {
     const courses = get().classes;
     if (category !== "") {
@@ -62,6 +73,39 @@ const courseStore = (set, get) => ({
       set({ classes: filtered });
     }
   },
+  resetFilter: () =>
+    set({ classes: JSON.parse(localStorage.getItem("kelas")) }),
+
+  addToPaidCourse: async (courseId) => {
+    if (localStorage.getItem("user")) {
+      const userInfo = JSON.parse(localStorage.getItem("user"));
+      const courseData = {
+        courseId: courseId,
+        userId: userInfo.email,
+      };
+      try {
+        await axios.post("/course", courseData);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  },
+
+  getAllPaidCourse: async () => {
+    if (localStorage.getItem("user")) {
+      const userInfo = JSON.parse(localStorage.getItem("user"));
+      try {
+        const apiResponse = await axios.get(`/course/${userInfo.email}`);
+        localStorage.setItem("course", JSON.stringify(apiResponse.data.data));
+        set(() => ({
+          paidCourse: apiResponse.data.data,
+        }));
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  },
+
   filteredCourse: (keyword) => {
     const courses = get().paidCourse;
     if (keyword !== "") {
@@ -71,41 +115,9 @@ const courseStore = (set, get) => ({
       set({ paidCourse: filtered });
     }
   },
-  resetFilter: () => set({ classes: DataKelas }),
-  setPaidClassList: (arrKelasId) => {
-    const allClasses = get().classes;
-    const temp = allClasses.filter((x) => arrKelasId.includes(x.id.toString()));
-    localStorage.setItem("course", JSON.stringify([...new Set(temp)]));
-    set(() => ({ paidCourse: [...new Set(temp)] }));
-  },
-  addCourse: (kelas_id) => {
-    const allClasses = get().classes;
-    const existingCourse = get().paidCourse;
-    const kelas = allClasses.find((cls) => cls.id == kelas_id);
-    if (existingCourse.length == 0) {
-      const temp = [];
-      temp.push(kelas);
-      localStorage.setItem("course", JSON.stringify(temp));
-      set((state) => ({
-        paidCourse: [...state.paidCourse, ...temp],
-      }));
-    } else {
-      const temp2 = JSON.parse(localStorage.getItem("course"));
-      temp2.push(kelas);
-      localStorage.setItem("course", JSON.stringify(temp2));
 
-      set((state) => ({
-        paidCourse: [...state.paidCourse, kelas],
-      }));
-    }
-  },
   resetCourseFilter: () => {
-    const data = localStorage.getItem("course")
-      ? JSON.parse(localStorage.getItem("course"))
-      : [];
-    set(() => ({
-      paidCourse: data,
-    }));
+    set({ paidCourse: JSON.parse(localStorage.getItem("course")) });
   },
 });
 

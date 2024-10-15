@@ -1,9 +1,10 @@
-import { lazy } from "react";
+import { lazy, useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Root from "./components/layout/Root";
 import Public from "./components/layout/Public";
 import Private from "./components/layout/Private";
+import useCourseStore from "./store/courseStore";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -17,6 +18,9 @@ const Payment = lazy(() => import("./pages/Payment"));
 const Status = lazy(() => import("./pages/Status"));
 
 function App() {
+  const getAllCourse = useCourseStore((state) => state.getAllCourse);
+  const getAllPaidCourse = useCourseStore((state) => state.getAllPaidCourse);
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -98,6 +102,12 @@ function App() {
       ],
     },
   ]);
+
+  useEffect(() => {
+    getAllCourse();
+    getAllPaidCourse();
+  }, []);
+
   return <RouterProvider router={router} />;
 }
 

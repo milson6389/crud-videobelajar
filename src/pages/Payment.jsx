@@ -19,7 +19,7 @@ const Payment = () => {
   const dataPaymentGuide = useTrxStore((state) => state.paymentStepGuide);
   const classPackage = useCourseStore((state) => state.classPackage);
   const updateTrx = useTrxStore((state) => state.updateTrx);
-  const addCourse = useCourseStore((state) => state.addCourse);
+  const addCourse = useCourseStore((state) => state.addToPaidCourse);
   const isPending = useTrxStore((state) => state.selectedWOP.isMaintenance);
 
   useEffect(() => {

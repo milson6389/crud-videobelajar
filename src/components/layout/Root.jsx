@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 
 import NavBar from "./NavBar";
 import Spinner from "../ui/Spinner";
+import useCourseStore from "../../store/courseStore";
 
 const Root = () => {
   return (

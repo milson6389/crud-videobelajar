@@ -8,13 +8,13 @@ const KelasInfo = ({ kelas }) => {
       <div className="flex items-center justify-start gap-3">
         <img
           src={CardProfile}
-          alt={kelas.lecturer_name}
+          alt={kelas.lecturerName}
           className="w-[50px] h-[50px] border rounded-md bg-cream"
           loading="lazy"
         />
         <div className="flex flex-col">
-          <p className="font-bold text-sm">{kelas.lecturer_name}</p>
-          <p className="text-sm">{kelas.lecturer_title}</p>
+          <p className="font-bold text-sm">{kelas.lecturerName}</p>
+          <p className="text-sm">{kelas.lecturerTitle}</p>
         </div>
       </div>
     </div>
