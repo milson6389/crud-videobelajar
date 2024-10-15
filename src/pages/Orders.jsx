@@ -8,7 +8,6 @@ import useCourseStore from "../store/courseStore";
 import useTrxStore from "../store/trxStore";
 
 const Orders = () => {
-  const allCourse = useCourseStore((state) => state.classes);
   const filterTrx = useTrxStore((state) => state.filterTrxByTitle);
   const filterCtg = useTrxStore((state) => state.filterTrxByCategory);
   const resetFilter = useTrxStore((state) => state.resetFilter);

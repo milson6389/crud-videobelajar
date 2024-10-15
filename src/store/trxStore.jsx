@@ -5,7 +5,7 @@ const trxStore = (set, get) => ({
   wop: localStorage.getItem("wop")
     ? JSON.parse(localStorage.getItem("wop"))
     : [],
-    
+
   paymentStepGuide: localStorage.getItem("wopGuide")
     ? JSON.parse(localStorage.getItem("wopGuide"))
     : [],
@@ -108,7 +108,6 @@ const trxStore = (set, get) => ({
           admin: trxObj.admin,
           vaNo: trxObj.vaNo,
         };
-        console.log("new: ", newTrxData);
         await axios.post("/trx", newTrxData);
       } catch (error) {
         console.log(error);
@@ -139,8 +138,8 @@ const trxStore = (set, get) => ({
   filterTrxByTitle: (title) => {
     const filteredTrx = get().trxHistory;
     if (title !== "") {
-      const temp = filteredTrx.filter(
-        (x) => x.kelasTitle.toLowerCase() == title.toLowerCase()
+      const temp = filteredTrx.filter((x) =>
+        x.kelasTitle.toLowerCase().includes(title.toLowerCase())
       );
       set(() => ({ trxHistory: temp }));
     }
