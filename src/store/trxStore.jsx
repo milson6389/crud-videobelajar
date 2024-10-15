@@ -55,16 +55,14 @@ const trxStore = (set, get) => ({
   },
 
   getAllWop: async () => {
-    if (localStorage.getItem("user")) {
-      try {
-        const apiResponse = await axios.get("/payment");
-        localStorage.setItem("wop", JSON.stringify(apiResponse.data.data));
-        set(() => ({
-          wop: apiResponse.data.data,
-        }));
-      } catch (error) {
-        console.log(error);
-      }
+    try {
+      const apiResponse = await axios.get("/payment");
+      localStorage.setItem("wop", JSON.stringify(apiResponse.data.data));
+      set(() => ({
+        wop: apiResponse.data.data,
+      }));
+    } catch (error) {
+      console.log(error);
     }
   },
 
