@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "title": "Introduction Course",
+    "sub_material": [
+      {
+        "title": "Intro 1",
+        "duration": 12
+      },
+      {
+        "title": "Intro 2",
+        "duration": 8
+      },
+      {
+        "title": "Intro 3",
+        "duration": 20
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Basic Course",
+    "sub_material": [
+      {
+        "title": "Basic 1",
+        "duration": 12
+      },
+      {
+        "title": "Basic 2",
+        "duration": 8
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Advance Course",
+    "sub_material": [
+      {
+        "title": "Advance 1",
+        "duration": 12
+      },
+      {
+        "title": "Advance 2",
+        "duration": 8
+      },
+      {
+        "title": "Advance 3",
+        "duration": 20
+      },
+      {
+        "title": "Advance 4",
+        "duration": 5
+      }
+    ]
+  }
+]

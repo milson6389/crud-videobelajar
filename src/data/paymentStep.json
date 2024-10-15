@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "title": "Transfer Bank",
+    "sub": [
+      "1. Masukkan kartu ATM dan PIN Anda",
+      "2. Di menu utama pilih Transaksi Lainnya. Pilih Transfer. Pilih Ke Virtual Account",
+      "3. Masukkan nomor Virtual Account",
+      "4. Pastikan data Virtual Account Anda benar, kemudian masukkan angka yang perlu anda bayarkan, kemudian pilih Benar",
+      "5. Cek dan perhatikan konfirmasi pembayaran dari layar ATM, jika sudah benar pilih Ya, atau pilih Tidak jika data di layar masih salah",
+      "6. Transaksi Anda sudah selesai. Pilih Tidak untuk tidak melanjutkan transaksi lain"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "E-Wallet",
+    "sub": [
+      "1. Buka Aplikasi E-Wallet",
+      "2. Pilih Transfer, kemudian pilih ke Rekening Bank",
+      "3. Masukkan nomor virtual account tujuan",
+      "4. Masukkan angka yang perlu anda bayarkan, kemudian pilih lanjutkan",
+      "5. Cek dan perhatikan detail konfirmasi pembayaran",
+      "6. Masukkan Pin E-Wallet / Biometric anda untuk mengkonfirmasi transfer",
+      "7. Transaksi Anda sudah selesai."
+    ]
+  }
+]
