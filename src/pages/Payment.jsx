@@ -13,13 +13,15 @@ const Payment = () => {
   const allTrx = useTrxStore((state) => state.trxHistory);
   const currentTrx = allTrx.find((x) => x.id == id);
   const kelasData = useCourseStore((state) => state.classes).find(
-    (x) => x.id == currentTrx.kelas_id
+    (x) => x.id == currentTrx.kelasId
   );
   const setWopInfo = useTrxStore((state) => state.getWOPDetailByCode);
   const dataPaymentGuide = useTrxStore((state) => state.paymentStepGuide);
   const classPackage = useCourseStore((state) => state.classPackage);
   const updateTrx = useTrxStore((state) => state.updateTrx);
+  const getAllTrx = useTrxStore((state) => state.getAllTrx);
   const addCourse = useCourseStore((state) => state.addToPaidCourse);
+  const getCourse = useCourseStore((state) => state.getAllPaidCourse);
   const isPending = useTrxStore((state) => state.selectedWOP.isMaintenance);
 
   useEffect(() => {
@@ -33,18 +35,22 @@ const Payment = () => {
     currency: "IDR",
   });
 
-  const checkoutHandler = () => {
+  const checkoutHandler = async () => {
     const status = isPending ? "INP" : "DONE";
     const trx = {
       id: id,
       status: status,
       paidDt: new Date().toLocaleString(),
     };
-    updateTrx(trx);
+    await updateTrx(trx);
+    await getAllTrx();
     if (!isPending) {
-      addCourse(Number(currentTrx.kelas_id));
+      await addCourse(Number(currentTrx.kelasId));
+      await getCourse();
     }
-    navigate(`/status/${id}`);
+    setTimeout(() => {
+      navigate(`/status/${id}`);
+    }, 500);
   };
 
   const rollbackHandler = () => {
@@ -71,7 +77,7 @@ const Payment = () => {
                     Bayar melalui {currentTrxWopInfo.title}
                   </p>
                   <div className="flex items-center gap-3">
-                    <p className="text-slate-500">{currentTrx.va_no}</p>
+                    <p className="text-slate-500">{currentTrx.vaNo}</p>
                     <button className="text-red-500">Salin</button>
                   </div>
                 </Card>

@@ -17,6 +17,7 @@ const Checkout = () => {
   const wopData = useTrxStore((state) => state.wop);
   const selectedWOP = useTrxStore((state) => state.selectedWOP);
   const adminFee = selectedWOP.admin;
+  const getAllTrx = useTrxStore((state) => state.getAllTrx);
   const addTrx = useTrxStore((state) => state.addTrx);
   const updateTrx = useTrxStore((state) => state.updateTrx);
   const userInfo = useUserStore((state) => state.user);
@@ -30,36 +31,43 @@ const Checkout = () => {
 
   const coursePrice = kelasData.price * 1000;
 
-  const checkoutHandler = () => {
+  const checkoutHandler = async () => {
     if (location.state?.trx) {
       const existingData = location.state.trx;
       const updatedData = {
         ...existingData,
         wopCode: selectedWOP.code,
         admin: adminFee,
-        va_no: `${selectedWOP.va_code} ${userInfo.no_hp.replace(
+        vaNo: `${selectedWOP.va_code} ${userInfo.no_hp.replace(
           userInfo.no_hp.slice(0, 3),
           "0"
         )}`,
       };
-      updateTrx(updatedData);
-      navigate(`/payment/${existingData.id}`);
+      await updateTrx(updatedData);
+      await getAllTrx();
+      setTimeout(() => {
+        navigate(`/payment/${existingData.id}`);
+      }, 500);
     } else {
       const generatedId = +new Date();
       const newTrx = {
         id: generatedId,
-        kelas_id: id,
+        kelasId: id,
+        title: kelasData.title,
         email: userInfo.email,
         wopCode: selectedWOP.code,
         price: kelasData.price * 1000,
         admin: adminFee,
-        va_no: `${selectedWOP.va_code} ${userInfo.no_hp.replace(
+        vaNo: `${selectedWOP.va_code} ${userInfo.no_hp.replace(
           userInfo.no_hp.slice(0, 3),
           "0"
         )}`,
       };
-      addTrx(newTrx);
-      navigate(`/payment/${generatedId}`);
+      await addTrx(newTrx);
+      await getAllTrx();
+      setTimeout(() => {
+        navigate(`/payment/${generatedId}`);
+      }, 500);
     }
   };
 

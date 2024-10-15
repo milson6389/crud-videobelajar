@@ -1,11 +1,13 @@
+import axios from "axios";
 import { create } from "zustand";
 
-import DataWOP from "../data/wop.json";
-import DataPaymentGuide from "../data/paymentStep.json";
-
 const trxStore = (set, get) => ({
-  wop: DataWOP,
-  paymentStepGuide: DataPaymentGuide,
+  wop: localStorage.getItem("wop")
+    ? JSON.parse(localStorage.getItem("wop"))
+    : [],
+  paymentStepGuide: localStorage.getItem("wopGuide")
+    ? JSON.parse(localStorage.getItem("wopGuide"))
+    : [],
   trxHistory: localStorage.getItem("trx")
     ? JSON.parse(localStorage.getItem("trx"))
     : [],
@@ -16,70 +18,6 @@ const trxStore = (set, get) => ({
     admin: 0,
     img: "",
     isMaintenance: false,
-  },
-  addTrx: (trxObj) => {
-    const tgl = new Date().getDate().toString();
-    const month = (new Date().getMonth() + 1).toString();
-    const year = new Date().getFullYear().toString();
-    const code = tgl + month + year;
-
-    const newTrx = {
-      id: trxObj.id,
-      kelas_id: trxObj.kelas_id,
-      email: trxObj.email,
-      trxNo: `INV/${code}`,
-      trxDt: new Date().toLocaleString(),
-      paidDt: "",
-      wopCode: trxObj.wopCode,
-      price: trxObj.price,
-      admin: trxObj.admin,
-      va_no: trxObj.va_no,
-      status: "PENDING",
-    };
-
-    const existingArray = get().trxHistory;
-    if (existingArray.length == 0) {
-      const temp = [];
-      temp.push(newTrx);
-      localStorage.setItem("trx", JSON.stringify(temp));
-
-      set((state) => ({
-        trxHistory: [...state.trxHistory, ...temp],
-      }));
-    } else {
-      const temp2 = JSON.parse(localStorage.getItem("trx"));
-      temp2.push(newTrx);
-      localStorage.setItem("trx", JSON.stringify(temp2));
-
-      set((state) => ({
-        trxHistory: [...state.trxHistory, newTrx],
-      }));
-    }
-  },
-  updateTrx: (trxObj) => {
-    const trxes = get().trxHistory;
-    const updatedTrx = trxes?.map((trx) => {
-      if (trx.id == trxObj.id) {
-        return {
-          ...trx,
-          ...trxObj,
-        };
-      } else {
-        return trx;
-      }
-    });
-    localStorage.setItem("trx", JSON.stringify(updatedTrx));
-    set((state) => ({
-      trxHistory: updatedTrx,
-    }));
-  },
-  deleteTrx: (id) => {
-    const trxes = get().trxHistory;
-    const updatedTrx = trxes.filter((trx) => trx.id != id);
-    localStorage.setItem("trx", JSON.stringify(updatedTrx));
-    set((state) => ({
-      trxHistory: updatedTrx,
-    }));
   },
   setSelectedWOP: (wopObj) => {
     set(() => ({ selectedWOP: wopObj }));
@@ -106,6 +44,90 @@ const trxStore = (set, get) => ({
       },
     }));
   },
+
+  filteredTrx: (arrKelasId) => {
+    const filteredTrx = get().trxHistory;
+    const temp = filteredTrx.filter((x) =>
+      arrKelasId.includes(Number(x.kelas_id))
+    );
+    set(() => ({ trxHistory: temp }));
+  },
+
+  getAllWop: async () => {
+    if (localStorage.getItem("user")) {
+      try {
+        const apiResponse = await axios.get("/payment");
+        localStorage.setItem("wop", JSON.stringify(apiResponse.data.data));
+        set(() => ({
+          wop: apiResponse.data.data,
+        }));
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  },
+
+  getWopGuide: async (type) => {
+    if (localStorage.getItem("user")) {
+      try {
+        const apiResponse = await axios.get(`/payment/${type}`);
+        localStorage.setItem("wopGuide", JSON.stringify(apiResponse.data.data));
+        set(() => ({
+          paymentStepGuide: apiResponse.data.data,
+        }));
+        return apiResponse.data.data;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  },
+
+  getAllTrx: async () => {
+    if (localStorage.getItem("user")) {
+      const userInfo = JSON.parse(localStorage.getItem("user")).email;
+      try {
+        const apiResponse = await axios.get(`/trx/${userInfo}`);
+        localStorage.setItem("trx", JSON.stringify(apiResponse.data.data));
+        set(() => ({
+          trxHistory: apiResponse.data.data,
+        }));
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  },
+
+  addTrx: async (trxObj) => {
+    if (localStorage.getItem("user")) {
+      const userInfo = JSON.parse(localStorage.getItem("user")).email;
+      try {
+        const newTrxData = {
+          id: trxObj.id,
+          email: userInfo,
+          kelasId: trxObj.kelasId,
+          title: trxObj.title,
+          wopCode: trxObj.wopCode,
+          price: trxObj.price,
+          admin: trxObj.admin,
+          vaNo: trxObj.vaNo,
+        };
+        await axios.post("/trx", newTrxData);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  },
+
+  updateTrx: async (trxObj) => {
+    if (localStorage.getItem("user")) {
+      try {
+        await axios.put("/trx", trxObj);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  },
+
   filterTrxByCategory: (ctg) => {
     const filteredTrx = get().trxHistory;
     if (ctg !== "") {
@@ -115,19 +137,9 @@ const trxStore = (set, get) => ({
       set(() => ({ trxHistory: temp }));
     }
   },
-  filteredTrx: (arrKelasId) => {
-    const filteredTrx = get().trxHistory;
-    const temp = filteredTrx.filter((x) =>
-      arrKelasId.includes(Number(x.kelas_id))
-    );
-    set(() => ({ trxHistory: temp }));
-  },
   resetFilter: () => {
-    const data = localStorage.getItem("trx")
-      ? JSON.parse(localStorage.getItem("trx"))
-      : [];
     set(() => ({
-      trxHistory: data,
+      trxHistory: JSON.parse(localStorage.getItem("trx")),
     }));
   },
 });

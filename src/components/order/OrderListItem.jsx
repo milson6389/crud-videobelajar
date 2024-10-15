@@ -23,7 +23,7 @@ const OrderListItem = ({ data }) => {
   });
 
   const courseInfo = useCourseStore((state) => state.classes).find(
-    (cls) => cls.id == data.kelas_id
+    (cls) => cls.id == data.kelasId
   );
 
   return (
