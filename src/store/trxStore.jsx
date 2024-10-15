@@ -5,12 +5,15 @@ const trxStore = (set, get) => ({
   wop: localStorage.getItem("wop")
     ? JSON.parse(localStorage.getItem("wop"))
     : [],
+    
   paymentStepGuide: localStorage.getItem("wopGuide")
     ? JSON.parse(localStorage.getItem("wopGuide"))
     : [],
+
   trxHistory: localStorage.getItem("trx")
     ? JSON.parse(localStorage.getItem("trx"))
     : [],
+
   selectedWOP: {
     title: "",
     code: "",
@@ -20,9 +23,11 @@ const trxStore = (set, get) => ({
     img: "",
     isMaintenance: false,
   },
+
   setSelectedWOP: (wopObj) => {
     set(() => ({ selectedWOP: wopObj }));
   },
+
   getWOPDetailByCode: (code) => {
     const wops = get().wop;
     for (let i = 0; i < wops.length; i++) {
@@ -33,6 +38,7 @@ const trxStore = (set, get) => ({
       }
     }
   },
+
   resetTrx: () => {
     set(() => ({
       selectedWOP: {
@@ -44,14 +50,6 @@ const trxStore = (set, get) => ({
         isMaintenance: false,
       },
     }));
-  },
-
-  filteredTrx: (arrKelasId) => {
-    const filteredTrx = get().trxHistory;
-    const temp = filteredTrx.filter((x) =>
-      arrKelasId.includes(Number(x.kelas_id))
-    );
-    set(() => ({ trxHistory: temp }));
   },
 
   getAllWop: async () => {
@@ -137,6 +135,17 @@ const trxStore = (set, get) => ({
       set(() => ({ trxHistory: temp }));
     }
   },
+
+  filterTrxByTitle: (title) => {
+    const filteredTrx = get().trxHistory;
+    if (title !== "") {
+      const temp = filteredTrx.filter(
+        (x) => x.kelasTitle.toLowerCase() == title.toLowerCase()
+      );
+      set(() => ({ trxHistory: temp }));
+    }
+  },
+
   resetFilter: () => {
     set(() => ({
       trxHistory: JSON.parse(localStorage.getItem("trx")),

@@ -9,7 +9,7 @@ import useTrxStore from "../store/trxStore";
 
 const Orders = () => {
   const allCourse = useCourseStore((state) => state.classes);
-  const filterTrx = useTrxStore((state) => state.filteredTrx);
+  const filterTrx = useTrxStore((state) => state.filterTrxByTitle);
   const filterCtg = useTrxStore((state) => state.filterTrxByCategory);
   const resetFilter = useTrxStore((state) => state.resetFilter);
   const [category, setCategory] = useState("");
@@ -39,13 +39,8 @@ const Orders = () => {
 
   const setQueryHandler = (keyword) => {
     setQuery(keyword);
-    const temp = allCourse
-      .filter((course) =>
-        course.title.toLowerCase().includes(keyword.toLowerCase())
-      )
-      .map((t) => t.id);
     resetFilter();
-    filterTrx(temp);
+    filterTrx(keyword);
   };
 
   const setDataByCategory = (ctg) => {
