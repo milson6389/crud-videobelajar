@@ -14,6 +14,7 @@ const trxStore = (set, get) => ({
   selectedWOP: {
     title: "",
     code: "",
+    trxType: "",
     va_code: "",
     admin: 0,
     img: "",
@@ -70,12 +71,11 @@ const trxStore = (set, get) => ({
   getWopGuide: async (type) => {
     if (localStorage.getItem("user")) {
       try {
-        const apiResponse = await axios.get(`/payment/${type}`);
-        localStorage.setItem("wopGuide", JSON.stringify(apiResponse.data.data));
+        const wopGuide = get().wop.find((w) => w.trxType == type).guide;
+        localStorage.setItem("wopGuide", JSON.stringify(wopGuide));
         set(() => ({
-          paymentStepGuide: apiResponse.data.data,
+          paymentStepGuide: wopGuide,
         }));
-        return apiResponse.data.data;
       } catch (error) {
         console.log(error);
       }
@@ -106,11 +106,13 @@ const trxStore = (set, get) => ({
           email: userInfo,
           kelasId: trxObj.kelasId,
           title: trxObj.title,
+          trxType: trxObj.trxType,
           wopCode: trxObj.wopCode,
           price: trxObj.price,
           admin: trxObj.admin,
           vaNo: trxObj.vaNo,
         };
+        console.log("new: ", newTrxData);
         await axios.post("/trx", newTrxData);
       } catch (error) {
         console.log(error);

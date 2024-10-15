@@ -16,17 +16,20 @@ const Payment = () => {
     (x) => x.id == currentTrx.kelasId
   );
   const setWopInfo = useTrxStore((state) => state.getWOPDetailByCode);
-  const dataPaymentGuide = useTrxStore((state) => state.paymentStepGuide);
+
   const classPackage = useCourseStore((state) => state.classPackage);
   const updateTrx = useTrxStore((state) => state.updateTrx);
   const getAllTrx = useTrxStore((state) => state.getAllTrx);
   const addCourse = useCourseStore((state) => state.addToPaidCourse);
   const getCourse = useCourseStore((state) => state.getAllPaidCourse);
   const isPending = useTrxStore((state) => state.selectedWOP.isMaintenance);
+  const getWopGuide = useTrxStore((state) => state.getWopGuide);
+  const dataPaymentGuide = useTrxStore((state) => state.paymentStepGuide);
 
   useEffect(() => {
     setWopInfo(currentTrx.wopCode);
-  }, [currentTrx.wopCode]);
+    getWopGuide(currentTrx.trxType);
+  }, [currentTrx.wopCode, currentTrx.trxType]);
 
   const currentTrxWopInfo = useTrxStore((state) => state.selectedWOP);
 
@@ -121,8 +124,8 @@ const Payment = () => {
             </Card>
             <Card className="mb-5">
               <h1 className="font-bold text-xl mb-3">Tata Cara Pembayaran</h1>
-              {dataPaymentGuide.map((data) => {
-                return <TrxGuideAccordion key={data.id} data={data} />;
+              {dataPaymentGuide.map((data, idx) => {
+                return <TrxGuideAccordion key={idx} data={data} />;
               })}
             </Card>
           </div>

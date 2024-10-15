@@ -22,7 +22,7 @@ const TrxGuideAccordion = ({ data }) => {
       </div>
       <ul>
         {isOpen &&
-          data.sub.map((dt, id) => {
+          data.desc.map((dt, id) => {
             return <li key={id}>{dt}</li>;
           })}
       </ul>

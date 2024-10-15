@@ -36,6 +36,7 @@ const Checkout = () => {
       const existingData = location.state.trx;
       const updatedData = {
         ...existingData,
+        trxType: selectedWOP.trxType,
         wopCode: selectedWOP.code,
         admin: adminFee,
         vaNo: `${selectedWOP.va_code} ${userInfo.no_hp.replace(
@@ -55,6 +56,7 @@ const Checkout = () => {
         kelasId: id,
         title: kelasData.title,
         email: userInfo.email,
+        trxType: selectedWOP.trxType,
         wopCode: selectedWOP.code,
         price: kelasData.price * 1000,
         admin: adminFee,
