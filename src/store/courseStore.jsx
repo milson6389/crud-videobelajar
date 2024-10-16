@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "../axios";
+import courseApi from "../services/api/courseApi";
 
 const courseStore = (set, get) => ({
   paidCourse: localStorage.getItem("course")
@@ -56,15 +56,10 @@ const courseStore = (set, get) => ({
   ],
 
   getAllCourse: async () => {
-    try {
-      const apiResponse = await axios.get("/kelas");
-      localStorage.setItem("kelas", JSON.stringify(apiResponse.data.data));
-      set(() => ({
-        classes: apiResponse.data.data,
-      }));
-    } catch (error) {
-      console.log(error);
-    }
+    const courseData = await courseApi.getAllCourseList();
+    set(() => ({
+      classes: courseData,
+    }));
   },
   filteredClass: (category) => {
     const courses = get().classes;
@@ -77,33 +72,14 @@ const courseStore = (set, get) => ({
     set({ classes: JSON.parse(localStorage.getItem("kelas")) }),
 
   addToPaidCourse: async (courseId) => {
-    if (localStorage.getItem("user")) {
-      const userInfo = JSON.parse(localStorage.getItem("user"));
-      const courseData = {
-        courseId: courseId,
-        userId: userInfo.email,
-      };
-      try {
-        await axios.post("/course", courseData);
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    await courseApi.addCourseToPaidCourse(courseId);
   },
 
   getAllPaidCourse: async () => {
-    if (localStorage.getItem("user")) {
-      const userInfo = JSON.parse(localStorage.getItem("user"));
-      try {
-        const apiResponse = await axios.get(`/course/${userInfo.email}`);
-        localStorage.setItem("course", JSON.stringify(apiResponse.data.data));
-        set(() => ({
-          paidCourse: apiResponse.data.data,
-        }));
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    const paidCourseData = await courseApi.getAllPaidCourse();
+    set(() => ({
+      paidCourse: paidCourseData,
+    }));
   },
 
   filteredCourse: (keyword) => {

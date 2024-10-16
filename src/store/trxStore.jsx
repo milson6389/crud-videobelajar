@@ -1,5 +1,6 @@
 import axios from "axios";
 import { create } from "zustand";
+import trxApi from "../services/api/trxApi";
 
 const trxStore = (set, get) => ({
   wop: localStorage.getItem("wop")
@@ -53,15 +54,10 @@ const trxStore = (set, get) => ({
   },
 
   getAllWop: async () => {
-    try {
-      const apiResponse = await axios.get("/payment");
-      localStorage.setItem("wop", JSON.stringify(apiResponse.data.data));
-      set(() => ({
-        wop: apiResponse.data.data,
-      }));
-    } catch (error) {
-      console.log(error);
-    }
+    const wopData = await trxApi.getAllWopList();
+    set(() => ({
+      wop: wopData,
+    }));
   },
 
   getWopGuide: async (type) => {
@@ -79,50 +75,32 @@ const trxStore = (set, get) => ({
   },
 
   getAllTrx: async () => {
-    if (localStorage.getItem("user")) {
-      const userInfo = JSON.parse(localStorage.getItem("user")).email;
-      try {
-        const apiResponse = await axios.get(`/trx/${userInfo}`);
-        localStorage.setItem("trx", JSON.stringify(apiResponse.data.data));
-        set(() => ({
-          trxHistory: apiResponse.data.data,
-        }));
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    const trxData = await trxApi.getAllTrxList();
+    set(() => ({
+      trxHistory: trxData,
+    }));
   },
 
   addTrx: async (trxObj) => {
     if (localStorage.getItem("user")) {
       const userInfo = JSON.parse(localStorage.getItem("user")).email;
-      try {
-        const newTrxData = {
-          id: trxObj.id,
-          email: userInfo,
-          kelasId: trxObj.kelasId,
-          title: trxObj.title,
-          trxType: trxObj.trxType,
-          wopCode: trxObj.wopCode,
-          price: trxObj.price,
-          admin: trxObj.admin,
-          vaNo: trxObj.vaNo,
-        };
-        await axios.post("/trx", newTrxData);
-      } catch (error) {
-        console.log(error);
-      }
+      const newTrxData = {
+        id: trxObj.id,
+        email: userInfo,
+        kelasId: trxObj.kelasId,
+        title: trxObj.title,
+        trxType: trxObj.trxType,
+        wopCode: trxObj.wopCode,
+        price: trxObj.price,
+        admin: trxObj.admin,
+        vaNo: trxObj.vaNo,
+      };
+      await trxApi.addTrx(newTrxData);
     }
   },
 
   updateTrx: async (trxObj) => {
-    if (localStorage.getItem("user")) {
-      try {
-        await axios.put("/trx", trxObj);
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    await trxApi.updateTrx(trxObj);
   },
 
   filterTrxByCategory: (ctg) => {
